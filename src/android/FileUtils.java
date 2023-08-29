@@ -62,7 +62,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import javax.naming.spi.DirectoryManager;
 
 /**
  * This class provides file and directory services to JavaScript.
