@@ -58,8 +58,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Permission;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import javax.naming.spi.DirectoryManager;
 
 /**
  * This class provides file and directory services to JavaScript.
@@ -624,6 +627,16 @@ public class FileUtils extends CordovaPlugin {
         allowedStorageDirectories.add(j.getString("applicationStorageDirectory"));
         if(j.has("externalApplicationStorageDirectory")) {
             allowedStorageDirectories.add(j.getString("externalApplicationStorageDirectory"));
+        }
+
+        // no permissions needed on removable storage external dirs
+        File[] outputDirs = cordova.getActivity().getApplicationContext().getExternalFilesDirs(null);
+        // map over outputDirs and find removable dirs
+        File[] removableDirs = Arrays.stream(outputDirs)
+                .filter(Environment::isExternalStorageRemovable)
+                .toArray(File[]::new);
+        for(File removableDir : removableDirs) {
+            allowedStorageDirectories.add("file://" + removableDir.getAbsolutePath());
         }
 
         if(permissionType == READ && hasReadPermission()) {
